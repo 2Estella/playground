@@ -1,0 +1,3 @@
+{
+  "extends": "./.nuxt/tsconfig.json" // 다른 tsconfig 파일을 확장하여 사용
+}

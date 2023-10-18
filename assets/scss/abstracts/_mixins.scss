@@ -1,0 +1,290 @@
+@charset "utf-8";
+
+/// 요소 크기 설정
+/// @param {Length} $width
+/// @param {Length} $height
+@mixin size($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+/// 특정 배수에 스타일 설정
+@mixin col-mod($n, $max) {
+  %mod-#{$n} {
+    @content;
+  }
+  $i: $n;
+  @while $i <= $max {
+    .col-#{$i} {
+      @extend %mod-#{$n};
+    }
+    $i: $i + $n;
+  }
+}
+
+/// 클래스명 포함
+@mixin start-with($name) {
+  div[class^='$name'],
+  div[class*='$name'] {
+    @content;
+  }
+}
+
+/// 버튼 정사각형 + radius 설정
+@mixin button-size($size, $radius: 0) {
+  width: $size;
+  height: $size;
+
+  @if $radius != 0 {
+    border-radius: $radius;
+  }
+}
+
+/// 버튼 색상
+@mixin button-color($color) {
+  background: $color;
+  border: 1px solid $color;
+  &:hover {
+    background: darken($color, 10%);
+  }
+  &:active {
+    background: lighten($color, 10%);
+  }
+  &.outline {
+    color: $color;
+    background: none;
+    border: 1px solid $color;
+    &:hover {
+      background: $color;
+      color: #ffffff;
+    }
+  }
+}
+
+/// hover + on
+@mixin hover {
+  &:hover {
+    @content;
+  }
+  &.on {
+    @content;
+  }
+}
+
+/// absolute position
+@mixin abs-position($top, $right, $bottom, $left) {
+  position: absolute;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+}
+
+/// 세로 가운데 정렬
+@mixin vertical-center {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+}
+
+/// flex
+@mixin flex_center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex_column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex_center_column {
+  @include flex_center;
+  flex-direction: column;
+}
+
+@mixin flex_center_between() {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex_center_around() {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+@mixin flex-center-evenly() {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+@mixin flex-start-center() {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/// grid 가운데 정렬
+@mixin grid_center() {
+  display: grid;
+  place-items: center;
+}
+
+/// background image
+@mixin bg_img($name, $path: '/images/', $format: 'jpg') {
+  background-image: url('#{$path}#{$name}.#{$format}');
+}
+// .photo {
+//   @include bgImg('photo', $format:'jpg');
+// }
+
+@mixin bg_cover {
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+/// ellipsis
+@mixin ellipsis($lines: 1) {
+  @if ($lines==1) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  } @else {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-line-clamp: $lines;
+    -webkit-box-orient: vertical;
+  }
+}
+
+/// font
+@mixin font-head {
+  font-size: $font-head-size;
+  font-weight: $font-head-weight;
+  line-height: $font-head-height;
+}
+
+@mixin font-xl {
+  font-size: $font-xl-size;
+  font-weight: $font-xl-weight;
+  line-height: $font-xl-height;
+}
+
+@mixin font-lg {
+  font-size: $font-lg-size;
+  font-weight: $font-lg-weight;
+  line-height: $font-lg-height;
+}
+
+@mixin font-m-2 {
+  font-size: $font-m-2-size;
+  font-weight: $font-m-2-weight;
+  line-height: $font-m-2-height;
+}
+
+@mixin font-m {
+  font-size: $font-m-size;
+  font-weight: $font-m-weight;
+  line-height: $font-m-height;
+}
+
+@mixin font-m-bold {
+  font-size: $font-m-size;
+  font-weight: $font-m-bold-weight;
+  line-height: $font-m-height;
+}
+
+@mixin font-sm {
+  font-size: $font-sm-size;
+  font-weight: $font-sm-weight;
+  line-height: $font-sm-height;
+}
+
+@mixin font-xs {
+  font-size: $font-xs-size;
+  font-weight: $font-xs-weight;
+  line-height: $font-xs-height;
+}
+
+@mixin font($size: false, $color: false, $weight: false, $line-height: false) {
+  @if $size {
+    font-size: $size;
+  }
+  @if $color {
+    color: $color;
+  }
+  @if $weight {
+    font-weight: $weight;
+  }
+  @if $line-height {
+    line-height: $line-height;
+  }
+}
+
+/// pseudo
+/// ::before, ::after에 적용
+@mixin pseudo($display: block, $position: absolute, $content: '') {
+  display: $display;
+  position: $position;
+  content: $content;
+}
+
+/// scrollbar
+@mixin scrollbar {
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    height: 30%;
+    // 스크롤바의 색상
+    background: $gray-400;
+
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    // 스크롤바 뒷 배경 색상
+    background: $gray-200;
+  }
+}
+
+/// placeholder
+@mixin input_placeholder {
+  &.placeholder {
+    @content;
+  }
+  &:-moz-placeholder {
+    @content;
+  }
+  &::-moz-placeholder {
+    @content;
+  }
+  &:-ms-input-placeholder {
+    @content;
+  }
+  &::-webkit-input-placeholder {
+    @content;
+  }
+}
+
+/// keyframes
+@mixin keyframes($name) {
+  @-webkit-keyframes #{$name} {
+    @content;
+  }
+  @-moz-keyframes #{$name} {
+    @content;
+  }
+  @keyframes #{$name} {
+    @content;
+  }
+}
