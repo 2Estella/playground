@@ -8,15 +8,9 @@ export default defineNuxtConfig({
     }
   },
   css: [
-    '@/assets/scss/abstracts/_functions.scss',
-    '@/assets/scss/abstracts/_variables.scss',
-    '@/assets/scss/abstracts/_mixins.scss',
     '@/assets/scss/main.scss',
   ],
   modules: [
     '@nuxtjs/eslint-module'
   ],
-  eslint: {
-    /* module options */
-  }
 })

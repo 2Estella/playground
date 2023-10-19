@@ -3,10 +3,10 @@
 @import url('https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css');
 
 // 1. abstract
-// @import
-//   'abstracts/variables',
-//   'abstracts/mixins',
-//   'abstracts/functions';
+@import
+  'abstracts/variables',
+  'abstracts/mixins',
+  'abstracts/functions';
 
 // 2. vendors
 
@@ -14,7 +14,7 @@
 @import 'base/base', 'base/fonts', 'base/transition';
 
 // 4. layout
-@import 'layout/utilities';
+@import 'layout/layout', 'layout/utilities';
 
 // 5. pages
-// @import 'pages/home', ;
+@import 'pages/bingo';

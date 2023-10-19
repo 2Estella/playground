@@ -1,7 +1,11 @@
 <script setup lang="ts"></script>
 <template>
-  <div>
+  <TheHeader />
+
+  <div class="contents">
     <TheGnb />
-    <slot></slot>
+    <main>
+      <slot></slot>
+    </main>
   </div>
 </template>

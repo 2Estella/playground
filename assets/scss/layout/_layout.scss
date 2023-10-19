@@ -1,0 +1,14 @@
+#container {
+  header {
+    @include flex_center;
+    height: 65px;
+  }
+
+  .contents {
+    display: flex;
+  }
+
+  main {
+    width: 100%;
+  }
+}
