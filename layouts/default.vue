@@ -1,6 +1,6 @@
 <script setup lang="ts"></script>
 <template>
-  <TheHeader />
+  <!-- <TheHeader /> -->
 
   <div class="contents">
     <TheGnb />
