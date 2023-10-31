@@ -177,29 +177,7 @@
       }
     }
   }
-}
 
-// 트랜지션
-// .board-enter-active,
-// .board-leave-active,
-// .board-move {
-//   transition: opacity .5s, transform .5s;
-//   background-color: pink;
-// }
-
-// .board-leave-active {
-//   position: absolute;
-// }
-
-// .board-enter {
-//   opacity: 0;
-//   transform: translateY(-30px);
-// }
-
-// .board-leave-to {
-//   opacity: 0;
-//   transform: translateY(30px);
-// }
 
 .list-move, /* apply transition to moving elements */
 .list-enter-active,
@@ -257,3 +235,26 @@
     }
   }
 }
+}
+
+// 트랜지션
+// .board-enter-active,
+// .board-leave-active,
+// .board-move {
+//   transition: opacity .5s, transform .5s;
+//   background-color: pink;
+// }
+
+// .board-leave-active {
+//   position: absolute;
+// }
+
+// .board-enter {
+//   opacity: 0;
+//   transform: translateY(-30px);
+// }
+
+// .board-leave-to {
+//   opacity: 0;
+//   transform: translateY(30px);
+// }
