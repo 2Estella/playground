@@ -76,6 +76,7 @@ const drawBoard = (): void => {
   flagTotal.value = boardSize[level.value].mine;
 };
 
+let isStartGame = ref<boolean>(false);
 /**
  * 클릭한 셀에 지뢰가 있는 지 확인하는 함수
  *
@@ -97,6 +98,7 @@ const findMine = (row: number, col: number) => {
       }
     }
 
+    isStartGame.value = true;
     countSecond();
   }
 
@@ -120,18 +122,19 @@ const findMine = (row: number, col: number) => {
  * @param col 해당 셀의 열
  */
 const spreadMines = (row: number, col: number): void => {
-  for (let i = 0; i < boardSize[level.value].mine; i++) {
-    let randomRow: number = Math.floor(Math.random() * boardRow.value);
-    let randomCol: number = Math.floor(Math.random() * boardCol.value);
+  let count = 0;
+
+  while (count < boardSize[level.value].mine) {
+    let randomRow = Math.floor(Math.random() * boardRow.value);
+    let randomCol = Math.floor(Math.random() * boardCol.value);
 
     if (row !== randomRow && col !== randomCol) {
-      if (coordinate[randomRow][randomCol] === -1) {
-        i--;
-      } else {
+      if (coordinate[randomRow][randomCol] !== -1) {
         coordinate[randomRow][randomCol] = -1;
 
-        console.log(randomRow, randomCol);
         countMine(randomRow, randomCol);
+
+        count++;
       }
     }
   }
@@ -145,13 +148,9 @@ const spreadMines = (row: number, col: number): void => {
  */
 const countMine = (row: number, col: number) => {
   for (let i = row - 1; i < row + 2; i++) {
-    if (boardArr.value[i]) {
-      for (let j = col - 1; j < col + 2; j++) {
-        if (boardArr.value[i][j]) {
-          if (coordinate[i][j] !== -1) {
-            coordinate[i][j] += 1;
-          }
-        }
+    for (let j = col - 1; j < col + 2; j++) {
+      if (boardArr.value[i] && coordinate[i][j] !== -1) {
+        coordinate[i][j] += 1;
       }
     }
   }
@@ -168,14 +167,12 @@ const checkAroundCell = (row: number, col: number): void => {
 
   if (coordinate[row][col] === 0) {
     for (let i = row - 1; i < row + 2; i++) {
-      if (boardArr.value[i]) {
-        for (let j = col - 1; j < col + 2; j++) {
-          if (boardArr.value[i][j]) {
-            if (!boardArr.value[i][j].isChecked && !boardArr.value[i][j].flagged) {
-              boardArr.value[i][j].isChecked = true;
+      for (let j = col - 1; j < col + 2; j++) {
+        if (boardArr.value[i] && boardArr.value[i][j]) {
+          if (!boardArr.value[i][j].isChecked && !boardArr.value[i][j].flagged) {
+            boardArr.value[i][j].isChecked = true;
 
-              aroundCellArr.push([i, j]);
-            }
+            aroundCellArr.push([i, j]);
           }
         }
       }
@@ -192,13 +189,6 @@ const checkAroundCell = (row: number, col: number): void => {
   }
 };
 
-let isStartGame = ref<boolean>(false);
-/**
- * 게임 시작 여부를 체크하는 isStartGame을 true로 변경해주는 함수
- */
-const startGame = (): void => {
-  isStartGame.value = true;
-};
 
 /**
  * 우클릭 시 깃발을 설치하는 함수
@@ -299,9 +289,10 @@ const setClass = (row: number, col: number): string => {
 
   } else if (boardArr.value[row][col].flagged) {
     return 'flagged';
-  }
 
-  return '';
+  } else {
+    return '';
+  }
 };
 
 let isGameOver = ref<boolean>(false);
@@ -320,13 +311,21 @@ const resetGame = (): void => {
   isWin.value = false;
 
   mineTotal.value = 0;
+  flagTotal.value = 0;
+
+  drawBoard();
 };
 
 /**
  * 게임을 종료 시키는 함수
  */
 const endGame = (): void => {
-  isGameOver.value = true;
+  if (confirm('게임을 종료하시겠습니까?')){
+    isGameOver.value = true;
+
+    resetGame();
+  }
+
 };
 
 /**
@@ -412,7 +411,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <div class="gameBoard" @click.once="startGame()">
+      <div class="gameBoard">
         <TransitionGroup
           appear
           name="list"
@@ -433,24 +432,28 @@ onMounted(() => {
               v-for="item in items"
             >
               <span v-if="isStartGame">
-                {{ item.countMine < 0 ? item.countMine : '' }}
                 {{ item.countMine > 0 && item.isChecked ? item.countMine : '' }}
               </span>
+              <!-- {{ item.countMine < 0 ? item.countMine : '' }} -->
             </li>
           </template>
         </TransitionGroup>
       </div>
-      <div class="endBtn" v-if="isStartGame">
-        <a href="#" @click.prevent="endGame()">게임 그만하기</a>
+      <div class="endBtn" v-if="isStartGame && !isGameOver">
+        <a href="#" @click.prevent="endGame">게임 그만하기</a>
       </div>
 
       <div class="resultBox" v-if="isWin || isGameOver">
-        <p class="win" v-if="isWin">
+        <div class="win" v-if="isWin">
           🎉 WIN! 🎉<br />
           <span>⏰: {{ time }}</span>
-        </p>
+          <div class="endBtn"><a href="#" @click.prevent="resetGame">게임 다시하기</a></div>
+        </div>
 
-        <span v-if="isGameOver">🔥 Game Over 🔥</span>
+        <span v-if="isGameOver">
+          🔥 Game Over 🔥
+          <span class="endBtn"><a href="#" @click.prevent="resetGame">게임 다시하기</a></span>
+        </span>
       </div>
     </div>
   </div>
