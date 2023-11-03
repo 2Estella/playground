@@ -1,11 +1,11 @@
 {
   "homepage": "https://2Estella.github.io/playground",
-  "name": "nuxt-app",
+  "name": "playground",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "deploy": "gh-pages -d .output",
+    "deploy": "gh-pages --dotfiles -d .output/public",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
