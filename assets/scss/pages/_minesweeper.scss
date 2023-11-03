@@ -96,6 +96,10 @@
           cursor: default;
         }
 
+        &.hovering:not(.checked) {
+          background: lighten(#e2e2e2, 5%);
+        }
+
         &.mine {
           background-color: yellow;
 

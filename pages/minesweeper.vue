@@ -79,8 +79,7 @@ const drawBoard = (): void => {
 let isStartGame = ref<boolean>(false);
 /**
  * 클릭한 셀에 지뢰가 있는 지 확인하는 함수
- *
- * 세 가지 조건에 따라 실행되는 것이 다름
+ * - 세 가지 조건에 따라 실행되는 것이 다름
  *   1. isStartGame.value가 false인 경우(게임 시작 전), 지뢰를 배치함
  *   2. 해당 셀의 countMine 값이 -1 인 경우(해당 셀이 지뢰), 게임이 종료 됨
  *   3. 해당 셀의 isChecked와 flagged의 값이 false인 경우(체크가 되지 않고, 깃발도 아닌 경우), isChecked의 값을 true로 변경하고 근처의 셀을 탐색하는 checkAroundCell 함수 실행
@@ -102,7 +101,7 @@ const findMine = (row: number, col: number) => {
     countSecond();
   }
 
-  if (boardArr.value[row][col].countMine === -1) {
+  if (boardArr.value[row][col].countMine === -1 && !boardArr.value[row][col].flagged) {
     isGameOver.value = true;
   }
 
@@ -213,7 +212,6 @@ const rightClick = (row: number, col: number): void => {
 
 /**
  * 양쪽 클릭 했을 때
- *
  * @param event
  */
 const bothClick = (event: MouseEvent): void => {
@@ -223,11 +221,22 @@ const bothClick = (event: MouseEvent): void => {
 };
 
 /**
+ * 마우스 오버 효과 제거
+ */
+const removeHover = () => {
+  cellArr.forEach(([r, c]) => {
+    boardArr.value[r][c].isHovering = false;
+  });
+};
+
+let cellArr: number[][] = [];
+/**
  * 열린 셀을 양 쪽 클릭을 했을 때 실행되는 함수
  */
 const doubleSideClick = (): void => {
   let flagTotal = 0;
-  let cellArr: number[][] = [];
+
+  cellArr = [];
 
   for (let i = cellRow - 1; i < cellRow + 2; i++) {
     if (boardArr.value[i]) {
@@ -239,7 +248,7 @@ const doubleSideClick = (): void => {
 
           if (!boardArr.value[i][j].isChecked && !boardArr.value[i][j].flagged) {
             cellArr.push([i, j]);
-            boardArr.value[i][j].isHovering = true;
+            // boardArr.value[i][j].isHovering = true;
           }
         }
       }
@@ -248,10 +257,7 @@ const doubleSideClick = (): void => {
 
   // 깃발의 수와 힌트 수가 같은 경우
   if (flagTotal === boardArr.value[cellRow][cellCol].countMine) {
-    cellArr.forEach(item => {
-      let r: number = item[0];
-      let c: number = item[1];
-
+    cellArr.forEach(([r, c]) => {
       if (flagTotal === boardArr.value[cellRow][cellCol].countMine) {
         if (coordinate[r][c] === -1 && !boardArr.value[r][c].flagged) {
           isGameOver.value = true;
@@ -263,6 +269,11 @@ const doubleSideClick = (): void => {
           checkAroundCell(r, c);
         }
       }
+    });
+
+  } else {
+    cellArr.forEach(([r, c]) => {
+      boardArr.value[r][c].isHovering = true;
     });
   }
 };
@@ -289,6 +300,9 @@ const setClass = (row: number, col: number): string => {
 
   } else if (boardArr.value[row][col].flagged) {
     return 'flagged';
+
+  } else if (boardArr.value[row][col].isHovering) {
+    return 'hovering';
 
   } else {
     return '';
@@ -325,7 +339,6 @@ const endGame = (): void => {
 
     resetGame();
   }
-
 };
 
 /**
@@ -353,7 +366,6 @@ const countSecond = (): void => {
     }
 
     time.value += 1;
-
   }, 1000);
 };
 
@@ -377,10 +389,6 @@ const divideArray = (array: number[], num: number): number[][] => {
 
   return newArray;
 };
-
-// const test = (row: number, col: number): void => {
-//   boardArr.value[row][col].isHovering = false
-// }
 
 watch(level, () => {
   isStartGame.value = false;
@@ -426,15 +434,15 @@ onMounted(() => {
                 `item n${item.countMine}`,
                 setClass(item.row, item.col)]"
               @mouseenter="getLocate(item.row, item.col)"
-              @click="[!item.isChecked ? findMine(item.row, item.col) : '']"
+              @click="findMine(item.row, item.col)"
               @mousedown="bothClick"
+              @mouseup="removeHover"
               @mouseup.right="rightClick(item.row, item.col)"
               v-for="item in items"
             >
               <span v-if="isStartGame">
                 {{ item.countMine > 0 && item.isChecked ? item.countMine : '' }}
               </span>
-              <!-- {{ item.countMine < 0 ? item.countMine : '' }} -->
             </li>
           </template>
         </TransitionGroup>
@@ -444,16 +452,16 @@ onMounted(() => {
       </div>
 
       <div class="resultBox" v-if="isWin || isGameOver">
-        <div class="win" v-if="isWin">
-          🎉 WIN! 🎉<br />
-          <span>⏰: {{ time }}</span>
+        <div>
+          <div class="win" v-if="isWin">
+            🎉 WIN! 🎉<br />
+            <span>⏰: {{ time }}</span>
+          </div>
+          <span v-else>
+            🔥 Game Over 🔥
+          </span>
           <div class="endBtn"><a href="#" @click.prevent="resetGame">게임 다시하기</a></div>
         </div>
-
-        <span v-if="isGameOver">
-          🔥 Game Over 🔥
-          <span class="endBtn"><a href="#" @click.prevent="resetGame">게임 다시하기</a></span>
-        </span>
       </div>
     </div>
   </div>
